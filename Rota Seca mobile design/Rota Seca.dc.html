@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#EADFCF}a{color:#C4471D}a:hover{color:#2B2420}</style>
+</helmet>
+<section style="padding:64px;display:flex;flex-direction:column;gap:56px;font-family:'Nunito',sans-serif;color:#2B2420">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:760px">
+    <span style="font-size:36px;font-weight:800;letter-spacing:-0.01em">Rota Seca</span>
+    <span style="font-size:16px;line-height:1.5;color:#4A3F38">Telas 390×844. Cada artboard é um protótipo clicável: barra inferior troca de aba; Detalhe, Adicionar/Editar e Como funciona abrem por cima com Voltar. Em Rotas, alterne 18:00 / 18:48 para ver o replay.</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <span style="font-family:'Nunito';font-size:14px;font-weight:600;color:#75685E">Telas</span>
+    <div style="display:flex;flex-wrap:wrap;gap:48px">
+      <div id="01" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">01 · Meus lugares</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="places" time="18:00" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="02" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">02 · Meus lugares · vazio</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="places" data-state="empty" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="03" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">03 · Adicionar lugar · validação</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="add" show-errors="{{ true }}" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="04" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">04 · Editar lugar</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="edit" place-id="trabalho" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="05" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">05 · Detalhe do alerta · 18:00</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="detail" place-id="trabalho" time="18:00" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="06" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">06 · Detalhe do alerta · 18:48 (CGE confirmou)</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="detail" place-id="trabalho" time="18:48" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="07" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">07 · Rotas · 18:00</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="routes" time="18:00" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="08" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">08 · Rotas · 18:48</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="routes" time="18:48" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="09" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">09 · Histórico</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="history" time="18:48" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="10" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">10 · Como funciona</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="how" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <span style="font-family:'Nunito';font-size:14px;font-weight:600;color:#75685E">Estados</span>
+    <div style="display:flex;flex-wrap:wrap;gap:48px">
+      <div id="11" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">11 · Carregando dados da API</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="places" data-state="loading" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="12" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">12 · Erro de conexão · último dado salvo</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="places" data-state="error" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="13" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">13 · Histórico sem internet</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="history" data-state="offline" time="18:48" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+      <div id="14" style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Nunito';font-size:14px;font-weight:600">14 · Detalhe · Sem estimativa</span><div style="width:390px;height:844px;border-radius:44px;overflow:hidden;border:1px solid #DCCBB4;background:#FBF5EC;box-shadow:0 24px 60px rgba(43,36,32,0.14)"><dc-import name="RotaSecaApp" screen="detail" place-id="vo" style="width:390px;height:844px" hint-size="390px,844px"></dc-import></div></div>
+    </div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
