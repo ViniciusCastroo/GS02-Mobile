@@ -97,7 +97,7 @@ describe('formatação', () => {
   });
   it('formata percentuais e o placeholder da estimativa', () => {
     expect(formatarPercentual(0.01083, 3)).toBe('1,083%');
-    expect(formatarEstimativa(null)).toBe('[x,xx]%');
+    expect(formatarEstimativa(null)).toBe('—');
     expect(formatarEstimativa(0.0123)).toBe('1,23%');
   });
   it('a previsão vale por 1 hora', () => {
@@ -124,7 +124,7 @@ describe('textos do design', () => {
     expect(resumoDoLugar(base, 'nu-jaime')).toMatchObject({
       status: 'elevado',
       confirmado: false,
-      nota: 'Estimativa [x,xx]% · acima do limiar de 1,083%',
+      nota: 'Acima do limiar de 1,083%',
     });
     expect(resumoDoLugar(confirmado, 'nu-jaime')).toMatchObject({
       confirmado: true,

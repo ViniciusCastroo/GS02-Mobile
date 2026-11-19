@@ -1,3 +1,6 @@
+// Os testes do cliente usam o mock, qualquer que seja o USE_MOCK do config.ts.
+jest.mock('../../config', () => ({ ...jest.requireActual('../../config'), USE_MOCK: true }));
+
 import { ErroApiResposta, buscarCruzamentos, buscarRisco } from '../../api/client';
 import { ErroMock, mockCruzamentos, mockRisco, mockRiscos } from '../../api/mock';
 import { CRUZAMENTOS_PADRAO, definirCruzamentos, idsCruzamentos } from '../../data/cruzamentos';

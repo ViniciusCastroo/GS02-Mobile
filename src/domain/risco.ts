@@ -9,7 +9,7 @@ import type { RiscoResposta, SituacaoRota, StatusRisco } from '../types';
 export const LIMIAR_PADRAO = 0.01083;
 
 /** Texto usado quando o valor exato da estimativa ainda não foi informado. */
-export const ESTIMATIVA_PLACEHOLDER = '[x,xx]%';
+export const ESTIMATIVA_PLACEHOLDER = '—';
 
 const STATUS_VALIDOS: StatusRisco[] = ['elevado', 'normal', 'sem_estimativa'];
 
@@ -125,7 +125,7 @@ export function formatarPercentual(valor: number, casas = 2): string {
   return `${(valor * 100).toFixed(casas).replace('.', ',')}%`;
 }
 
-/** Estimativa sem valor real vira o placeholder "[x,xx]%". */
+/** Estimativa sem valor real vira "—". */
 export function formatarEstimativa(estimativa: number | null | undefined): string {
   if (estimativa === null || estimativa === undefined || Number.isNaN(estimativa)) {
     return ESTIMATIVA_PLACEHOLDER;
@@ -234,7 +234,10 @@ export function resumoDoLugar(resposta: RiscoResposta | null | undefined, localI
     return {
       status,
       confirmado: false,
-      nota: `Estimativa ${formatarEstimativa(resposta?.estimativa)} · acima do limiar de ${limiar}`,
+      nota:
+        resposta?.estimativa != null
+          ? `Estimativa ${formatarEstimativa(resposta.estimativa)} · acima do limiar de ${limiar}`
+          : `Acima do limiar de ${limiar}`,
       frase: 'Pode alagar por aqui na próxima hora. Por enquanto é só um aviso: dá pra passar, mas fique de olho.',
     };
   }

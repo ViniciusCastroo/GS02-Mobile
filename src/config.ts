@@ -4,9 +4,9 @@
  * USE_MOCK = true  -> lê o mock local, que segue o mesmo contrato da API.
  * USE_MOCK = false -> consulta a API em API_URL (GET /cruzamentos e /risco).
  */
-export const API_URL = 'https://[a-preencher-url-da-api]';
+export const API_URL = 'http://192.168.15.3:8080'; // backend de SOA rodando no PC (rede local)
 
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 
 /**
  * Demonstração com o replay de 16/01/2025: mostra o selo e o seletor 18:00/18:48

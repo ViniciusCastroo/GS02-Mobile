@@ -43,17 +43,20 @@ export default function LugarScreen() {
   const db = useSQLiteContext();
   const navigation = useNavigation();
   const cruzamentos = useCruzamentos();
-  const opcoesCruzamento: Opcao<string>[] = [
-    OPCAO_NENHUM,
-    ...cruzamentos.map((c) => ({ valor: c.id, rotulo: c.nomeCurto, rotuloAcessivel: c.nome })),
-  ];
-
   const [nome, setNome] = useState('');
   const [etiqueta, setEtiqueta] = useState<Etiqueta>('Casa');
   const [personalizada, setPersonalizada] = useState('');
   const [endereco, setEndereco] = useState('');
   const [localId, setLocalId] = useState<string>(NENHUM);
   const [cruzamentoManual, setCruzamentoManual] = useState(false);
+  // Cruzamentos ainda não definidos pelo time de ML ficam fora da lista
+  // (a não ser que o lugar já esteja ligado a um deles).
+  const opcoesCruzamento: Opcao<string>[] = [
+    OPCAO_NENHUM,
+    ...cruzamentos
+      .filter((c) => !c.placeholder || c.id === localId)
+      .map((c) => ({ valor: c.id, rotulo: c.nomeCurto, rotuloAcessivel: c.nome })),
+  ];
   const [dias, setDias] = useState<number[]>([1, 2, 3, 4, 5]);
   const [chegada, setChegada] = useState('08:00');
   const [saida, setSaida] = useState('18:00');

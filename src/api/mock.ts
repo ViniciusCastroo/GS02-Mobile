@@ -8,7 +8,7 @@
  * - 18:48: o CGE registra o alagamento (confirmado_cge = true)
  *
  * Nenhum número foi inventado: o valor exato da estimativa não foi informado,
- * por isso "estimativa" é null (o app mostra "[x,xx]%"). Os outros 3
+ * por isso "estimativa" é null (o app mostra "—"). Os outros 3
  * cruzamentos do estudo ainda são placeholders, sem estimativa.
  */
 import { CRUZAMENTOS_PADRAO } from '../data/cruzamentos';

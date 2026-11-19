@@ -54,16 +54,25 @@ npx tsc --noEmit    # checagem de tipos
 
 ## Como alternar mock / API
 
+> **Atenção:** o repositório está configurado para usar a **API real** (`USE_MOCK = false`), apontando para o backend de SOA (`gs2-soa`) que rodava no PC do grupo durante a gravação do vídeo (`http://192.168.15.3:8080`, endereço da rede local). Quem clonar o projeto tem duas opções:
+>
+> 1. **Sem backend (mais simples):** troque para `USE_MOCK = true` em `src/config.ts`. O mock segue o mesmo contrato e tem os mesmos dados do replay de 16/01/2025, então o app fica igual ao do vídeo.
+> 2. **Com o backend:** suba o `gs2-soa` (`docker compose up --build` na pasta dele, ou `./mvnw spring-boot:run` com um MySQL local — ver o README do backend) e troque `API_URL` pelo IP do seu PC na rede (ex.: `http://192.168.0.10:8080`). O celular com o Expo Go precisa estar no mesmo Wi-Fi. Para conferir, abra `http://<seu-ip>:8080/cruzamentos` no navegador do celular.
+>
+> Se a API não responder, o app mostra a última previsão salva no SQLite. Na primeira abertura, sem nada salvo, as telas mostram o erro de conexão e ficam sem previsão.
+>
+> Os testes (`npm test`) sempre usam o mock, qualquer que seja o valor de `USE_MOCK`.
+
 Em `src/config.ts`:
 
 ```ts
-export const API_URL = 'https://[a-preencher-url-da-api]';
-export const USE_MOCK = true;   // true = mock local; false = API real (backend de SOA)
+export const API_URL = 'http://192.168.15.3:8080'; // IP do PC com o backend na rede local
+export const USE_MOCK = false;  // true = mock local; false = API real (backend de SOA)
 export const MODO_DEMO = true;  // replay de 16/01/2025: envia em= e mostra o seletor 18:00/18:48
 export const USAR_LOTE = true;  // junta consultas simultâneas em GET /risco?locais=
 ```
 
-- `USE_MOCK = true`: as chamadas são respondidas por `src/api/mock.ts`, que segue **o mesmo contrato da API** (mesmos endpoints, parâmetros, campos e erros). Assim o app já está pronto: quando o backend existir, basta preencher `API_URL` e trocar para `false`.
+- `USE_MOCK = true`: as chamadas são respondidas por `src/api/mock.ts`, que segue **o mesmo contrato da API** (mesmos endpoints, parâmetros, campos e erros). Funciona sem backend nem internet para a API.
 - `USE_MOCK = false`: consulta a API real em `API_URL` e valida cada resposta contra o contrato. Falta de internet, tempo esgotado ou erro 5xx → o app mostra a última previsão salva. Erro 4xx (ex.: `local_nao_encontrado`) → mostra o erro.
 - `MODO_DEMO = true`: mostra o selo “Demonstração: replay de 16/01/2025”, o seletor 18:00/18:48 (aba Rotas) e “Simular sem internet” (tela Como funciona). Cada consulta de risco leva `em=2025-01-16T18:00:00-03:00` ou `em=2025-01-16T18:48:00-03:00`. Vale tanto para o mock quanto para a API. `false` = dados de agora.
 
@@ -100,7 +109,7 @@ Com `em=`, a API responde como teria respondido naquele instante: `18:00` e `18:
 
 ## Como testar o replay 18:00 → 18:48
 
-1. Com `MODO_DEMO = true` (mock ou API), abra o app. Na aba **Lugares**, o lugar “Trabalho” (ligado ao cruzamento `nu-jaime`) aparece com **Risco elevado** e a nota “Estimativa [x,xx]% · acima do limiar de 1,083%”; “Casa” e “Casa da vó” aparecem **Sem estimativa** (“Fora dos 4 cruzamentos do estudo”).
+1. Com `MODO_DEMO = true` (mock ou API), abra o app. Na aba **Lugares**, o lugar “Trabalho” (ligado ao cruzamento `nu-jaime`) aparece com **Risco elevado** e a nota “Acima do limiar de 1,083%”; “Casa” e “Casa da vó” aparecem **Sem estimativa** (“Fora dos 4 cruzamentos do estudo”).
 2. Toque no cartão “Trabalho” para abrir o **detalhe** (mapa + painel): status, previsão, validade, estimativa, limiar e confirmação do CGE.
 3. Abra a aba **Rotas** (precisa de internet). O app calcula rotas reais **Casa → Trabalho** (Estação Autódromo → Shopping SP Market) e desenha no mapa. Com **18:00** (seletor sobre o mapa): “Pela Av. das Nações Unidas” = **Aviso**; “Rota alternativa” (desvio calculado) = **Sem estimativa**. Tempo e distância vêm do OSRM.
 4. Toque em **18:48**: o cartão do mapa fica vermelho (“Alagamento na Nações Unidas”), a primeira rota fica **Bloqueada** (riscada e tracejada no mapa, vai para o fim da lista) e a alternativa **Recomendada**. Em Lugares, “Trabalho” mostra “Alagamento confirmado pelo CGE às 18:48”.
@@ -191,7 +200,7 @@ O visual segue o protótipo **“Rota Seca · v2 (mapa primeiro)”** da pasta `
 
 Ajustes em relação ao protótipo, para seguir as regras do projeto:
 
-- **Sem números inventados:** estimativas (3,4%, 0,38%…), os outros 3 cruzamentos e os alertas antigos do protótipo viraram placeholders (`[x,xx]%`, `[cruzamento 2]`). Tempo e distância das rotas não vêm do protótipo: são calculados de verdade pelo OSRM.
+- **Sem números inventados:** estimativas (3,4%, 0,38%…), os outros 3 cruzamentos e os alertas antigos do protótipo viraram “—” (estimativa sem valor) e os cruzamentos ainda não definidos ficam fora do formulário. Tempo e distância das rotas não vêm do protótipo: são calculados de verdade pelo OSRM.
 - **Rotas:** “Pela Av. das Nações Unidas” e “Rota alternativa”, como pede o enunciado. As rotas são reais; podem aparecer mais alternativas se o OSRM devolver.
 - **Status com ícone:** os selos usam ícone + texto + cor (o protótipo usa só um ponto colorido).
 - **Contraste:** a aba ativa usa `#A83C17` e os textos sobre o trilho/mapa usam `#5A4E46` para manter 4.5:1.
@@ -213,7 +222,7 @@ Ajustes em relação ao protótipo, para seguir as regras do projeto:
 ## O que ainda é placeholder
 
 - Os outros 3 cruzamentos do estudo: “[cruzamento 2]”, “[cruzamento 3]”, “[cruzamento 4]” (sem estimativa).
-- O valor exato da estimativa do caso de 16/01/2025: `estimativa: null`, exibido como “[x,xx]%”.
+- O valor exato da estimativa do caso de 16/01/2025: `estimativa: null`, exibido como “—”.
 - Coordenadas dos cruzamentos 2, 3 e 4 (rotas por eles não são detectadas até isso ser preenchido).
 - Endereço da Casa da vó no seed.
 - `API_URL`, endereços dos lugares de exemplo, link do repositório, link do vídeo e integrantes.

@@ -86,7 +86,9 @@ function Detalhe({ d }: { d: DadosDetalhe }) {
   const confirmacao = semCobertura
     ? '—'
     : resumo.confirmado
-      ? `Sim, ${formatarHora(d.resposta?.confirmado_em)}`
+      ? d.resposta?.confirmado_em
+        ? `Sim, ${formatarHora(d.resposta.confirmado_em)}`
+        : 'Sim'
       : 'Não';
 
   return (
@@ -174,7 +176,8 @@ function Detalhe({ d }: { d: DadosDetalhe }) {
               <View style={styles.linha}>
                 <Ionicons name="close-circle" size={22} color={cores.textoSobreEscuro} />
                 <Texto variante="subtituloForte" cor={cores.textoSobreEscuro} style={{ flexShrink: 1 }}>
-                  Alagamento confirmado pelo CGE às {formatarHora(d.resposta?.confirmado_em)}
+                  Alagamento confirmado pelo CGE
+                  {d.resposta?.confirmado_em ? ` às ${formatarHora(d.resposta.confirmado_em)}` : ''}
                 </Texto>
               </View>
               <Texto cor={cores.textoSobreEscuro}>Rotas que passam por aqui estão bloqueadas.</Texto>
