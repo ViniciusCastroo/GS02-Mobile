@@ -10,12 +10,15 @@
 | **Problema** | Ninguém sabe, antes de sair, se o caminho vai alagar |
 | **Como funciona** | Estimativa horária por cruzamento, aviso acima de 1,083%, bloqueio só com confirmação do CGE |
 | **ODS** | 11 (meta 11.5) e 13 (meta 13.1) |
-| **Link do repositório** | [a preencher] |
 
 Global Solution FIAP — disciplina **Mobile Development & IoT**.
 
-**Integrantes:** [a preencher]
-
+**Integrantes:** 
+Guilherme Barbiero RM555185
+Marco Antonio Gonçalves RM556818
+Vinicius Castro RM556137
+Camila Mie Takara RM555418
+Matheus Cantiere RM558479
 ---
 
 ## O que o app faz
