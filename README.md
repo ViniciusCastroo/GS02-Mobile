@@ -6,10 +6,13 @@
 |---|---|
 | **Nome** | Rota Seca |
 | **Cidade** | São Paulo, SP |
+| **Bairro** | Campo Grande (cruzamento Av. das Nações Unidas × R. Jaime de Oliveira Souza) |
 | **Cidadão beneficiado** | Quem se desloca na chuva a pé, de moto, de bicicleta ou de ônibus |
 | **Problema** | Ninguém sabe, antes de sair, se o caminho vai alagar |
 | **Como funciona** | Estimativa horária por cruzamento, aviso acima de 1,083%, bloqueio só com confirmação do CGE |
 | **ODS** | 11 (meta 11.5) e 13 (meta 13.1) |
+| **Link do repositório** | https://github.com/ViniciusCastroo/GS02-Mobile |
+| **O que cada parte faz** | **ML:** modelo que estima a chance de o CGE registrar alagamento no cruzamento na próxima hora · **SOA:** API REST [gs2-soa](https://github.com/matheuscantiere/gs2-soa) com cruzamentos, previsões e confirmações do CGE · **Mobile (este repositório):** app que avisa o risco nos lugares salvos e mostra rotas que desviam · **IoT:** sensor de nível de água (ESP32) que envia leituras para a API |
 
 Global Solution FIAP — disciplina **Mobile Development & IoT**.
 
@@ -24,6 +27,7 @@ Vinicius Castro RM556137
 Camila Mie Takara RM555418
 
 Matheus Cantiere RM558479
+
 ---
 
 ## O que o app faz
@@ -62,10 +66,12 @@ npx tsc --noEmit    # checagem de tipos
 
 ## Como alternar mock / API
 
-> **Atenção:** o repositório está configurado para usar a **API real** (`USE_MOCK = false`), apontando para o backend de SOA (`gs2-soa`) que rodava no PC do grupo durante a gravação do vídeo (`http://192.168.15.3:8080`, endereço da rede local). Quem clonar o projeto tem duas opções:
+> **Atenção:** o repositório vem com `USE_MOCK = true`, então o app roda sem backend. O mock segue o mesmo contrato da API e tem os mesmos dados do replay de 16/01/2025, então o app fica igual ao do vídeo. No vídeo, o app estava ligado ao backend de SOA (`gs2-soa`), que rodava no PC do grupo (`http://192.168.15.3:8080`, endereço da rede local).
 >
-> 1. **Sem backend (mais simples):** troque para `USE_MOCK = true` em `src/config.ts`. O mock segue o mesmo contrato e tem os mesmos dados do replay de 16/01/2025, então o app fica igual ao do vídeo.
-> 2. **Com o backend:** suba o `gs2-soa` (`docker compose up --build` na pasta dele, ou `./mvnw spring-boot:run` com um MySQL local — ver o README do backend) e troque `API_URL` pelo IP do seu PC na rede (ex.: `http://192.168.0.10:8080`). O celular com o Expo Go precisa estar no mesmo Wi-Fi. Para conferir, abra `http://<seu-ip>:8080/cruzamentos` no navegador do celular.
+> Para usar a API real:
+>
+> 1. Troque para `USE_MOCK = false` em `src/config.ts`.
+> 2. Suba o `gs2-soa` (`docker compose up --build` na pasta dele, ou `./mvnw spring-boot:run` com um MySQL local — ver o README do backend) e troque `API_URL` pelo IP do seu PC na rede (ex.: `http://192.168.0.10:8080`). O celular com o Expo Go precisa estar no mesmo Wi-Fi. Para conferir, abra `http://<seu-ip>:8080/cruzamentos` no navegador do celular.
 >
 > Se a API não responder, o app mostra a última previsão salva no SQLite. Na primeira abertura, sem nada salvo, as telas mostram o erro de conexão e ficam sem previsão.
 >
@@ -75,7 +81,7 @@ Em `src/config.ts`:
 
 ```ts
 export const API_URL = 'http://192.168.15.3:8080'; // IP do PC com o backend na rede local
-export const USE_MOCK = false;  // true = mock local; false = API real (backend de SOA)
+export const USE_MOCK = true;   // true = mock local; false = API real (backend de SOA)
 export const MODO_DEMO = true;  // replay de 16/01/2025: envia em= e mostra o seletor 18:00/18:48
 export const USAR_LOTE = true;  // junta consultas simultâneas em GET /risco?locais=
 ```
@@ -208,7 +214,7 @@ O visual segue o protótipo **“Rota Seca · v2 (mapa primeiro)”** da pasta `
 
 Ajustes em relação ao protótipo, para seguir as regras do projeto:
 
-- **Sem números inventados:** estimativas (3,4%, 0,38%…), os outros 3 cruzamentos e os alertas antigos do protótipo viraram “—” (estimativa sem valor) e os cruzamentos ainda não definidos ficam fora do formulário. Tempo e distância das rotas não vêm do protótipo: são calculados de verdade pelo OSRM.
+- **Sem números inventados:** estimativas (3,4%, 0,38%…), e os alertas antigos do protótipo foram tirados: a estimativa sem valor aparece como “—” e os outros 3 cruzamentos, ainda não definidos, ficam fora do formulário. Tempo e distância das rotas não vêm do protótipo: são calculados de verdade pelo OSRM.
 - **Rotas:** “Pela Av. das Nações Unidas” e “Rota alternativa”, como pede o enunciado. As rotas são reais; podem aparecer mais alternativas se o OSRM devolver.
 - **Status com ícone:** os selos usam ícone + texto + cor (o protótipo usa só um ponto colorido).
 - **Contraste:** a aba ativa usa `#A83C17` e os textos sobre o trilho/mapa usam `#5A4E46` para manter 4.5:1.
@@ -221,33 +227,32 @@ Ajustes em relação ao protótipo, para seguir as regras do projeto:
 | Critério | Como é atendido | Onde |
 |---|---|---|
 | **Telas e navegação** | Expo Router com 3 abas (Lugares, Rotas, Histórico) e telas em stack com botão voltar (lugar, alerta, como funciona). Rotas dinâmicas `lugar/[id]` e `alerta/[id]` | `app/` |
-| **Consumo de dados** | Rotas reais via Nominatim + OSRM (veja “Rotas reais”). `GET {API_URL}/risco?local={id}` ou mock, com validação do contrato. Hook `useRisco` com atualização a cada 15 min e estados de carregando, erro de conexão (mostra o cache e quando foi atualizado) e sem estimativa | `src/api/`, `src/hooks/useRisco.ts`, `src/components/RiscoInfo.tsx` |
-| **Banco de dados** | expo-sqlite com 3 tabelas, migração por `user_version`, seed, CRUD completo de lugares, histórico de alertas sem duplicar e cache offline | `src/db/database.ts` |
+| **Consumo de dados** | Rotas reais via Nominatim + OSRM (veja “Rotas reais”). `GET {API_URL}/risco?local={id}` ou mock, com validação do contrato. Hook `useRisco` com atualização a cada 15 min e estados de carregando, erro de conexão (mostra o cache e quando foi atualizado) e sem estimativa | `src/api/`, `src/hooks/useRisco.ts`, `src/components/LoadingState.tsx`, `src/components/ErrorState.tsx` |
+| **Banco de dados** | expo-sqlite com 4 tabelas (lugares, alertas, cache_risco e cruzamentos), migração por `user_version`, seed, CRUD completo de lugares, histórico de alertas sem duplicar e cache offline | `src/db/database.ts` |
 | **Acessibilidade** | `accessibilityLabel`, `accessibilityRole` e `accessibilityHint` em todo elemento tocável; `accessibilityState` nos seletores (fichas, controles segmentados, rotas) e no switch; área de toque mínima 48×48; fonte base 16 (14–15 só em selos e legendas curtas) respeitando o tamanho de fonte do sistema; contraste ≥ 4.5:1 (valores em `src/theme.ts`); status sempre com texto + ícone + cor; mapa ilustrativo com descrição para leitor de tela; linguagem simples | `src/components/`, `src/theme.ts` |
-| **Aderência ao problema** | Regras do produto (limiar 1,083%, aviso x bloqueio, 4 cruzamentos, previsão horária) em funções puras testadas; replay real de 16/01/2025; nenhum número inventado (placeholders onde falta dado) | `src/domain/risco.ts`, `src/api/mock.ts` |
+| **Aderência ao problema** | Regras do produto (limiar 1,083%, aviso x bloqueio, 4 cruzamentos, previsão horária) em funções puras testadas; replay real de 16/01/2025; nenhum número inventado (“—” onde falta dado) | `src/domain/risco.ts`, `src/api/mock.ts` |
 | **Documentação** | Este README (ficha, como rodar, mock/API, estrutura, banco, rotas, design, rubrica e placeholders) e comentários no código | `README.md` |
 
 ## O que ainda é placeholder
 
-- Os outros 3 cruzamentos do estudo: “[cruzamento 2]”, “[cruzamento 3]”, “[cruzamento 4]” (sem estimativa).
+- Os outros 3 cruzamentos do estudo (`cruzamento-2`, `cruzamento-3`, `cruzamento-4`): ainda não definidos pelo time de ML, sem estimativa e fora do formulário.
 - O valor exato da estimativa do caso de 16/01/2025: `estimativa: null`, exibido como “—”.
 - Coordenadas dos cruzamentos 2, 3 e 4 (rotas por eles não são detectadas até isso ser preenchido).
 - Endereço da Casa da vó no seed.
-- `API_URL`, endereços dos lugares de exemplo, link do repositório, link do vídeo e integrantes.
 
 ## Prints das telas
 
 | Meus Lugares | Rotas (18:00) | Rotas (18:48) |
 |---|---|---|
-| [print a preencher] | [print a preencher] | [print a preencher] |
+| ![](prints/meus-lugares.png) | ![](prints/rotas-1800.png) | ![](prints/rotas-1848.png) |
 
 | Histórico | Detalhe do alerta | Adicionar lugar | Como funciona |
 |---|---|---|---|
-| [print a preencher] | [print a preencher] | [print a preencher] | [print a preencher] |
+| ![](prints/historico.png) | ![](prints/detalhe-alerta.png) | ![](prints/adicionar-lugar.png) | ![](prints/como-funciona.png) |
 
 ## Vídeo
 
-Link do vídeo: [a preencher]
+Link do vídeo: https://drive.google.com/file/d/1sDH6iatdqksQwRMz16fuyXWGbwJoI2XO/view?usp=sharing
 
 ## Fontes de dados
 
